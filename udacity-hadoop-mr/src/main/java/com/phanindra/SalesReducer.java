@@ -5,16 +5,19 @@ import java.io.IOException;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Reducer.Context;
 
-public class SalesReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+@SuppressWarnings("unused")
+public class SalesReducer extends
+		Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 
-	protected void reduce(Text arg0, Iterable<DoubleWritable> arg1,
-			org.apache.hadoop.mapreduce.Reducer.Context arg2)
+	@Override
+	protected void reduce(Text key, Iterable<DoubleWritable> values, Context context)
 			throws IOException, InterruptedException {
 		Double sum = 0.0;
-		for(DoubleWritable d: arg1) {
-			sum += d.get();
+		for(DoubleWritable value: values) {
+			sum += value.get();
 		}
-		arg2.write(arg0, sum);
+		context.write(key, new DoubleWritable(sum));
 	}
 }
