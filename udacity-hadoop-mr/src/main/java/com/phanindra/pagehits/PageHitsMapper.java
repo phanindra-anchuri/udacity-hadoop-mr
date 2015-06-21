@@ -14,6 +14,7 @@ public class PageHitsMapper extends
 	@Override
 	protected void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
+		String filterPage = context.getConfiguration().get("filter-page");
 		String val = value.toString();
 		int beginQuoteIndex = val.indexOf("\"");
 		int closeQuoteIndex = val.lastIndexOf("\"");
@@ -22,7 +23,7 @@ public class PageHitsMapper extends
 					closeQuoteIndex + 1);
 			String[] requestComponents = requestLine.split("\\s");
 			String page = requestComponents[1];
-			if (page != null) {
+			if (page != null && page.equals(filterPage)) {
 				context.write(new Text(page), new LongWritable(1L));
 			}
 		}

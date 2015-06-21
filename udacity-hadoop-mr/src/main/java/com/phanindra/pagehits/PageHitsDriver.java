@@ -14,7 +14,9 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class PageHitsDriver {
 	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
-		Job job = Job.getInstance(new Configuration());
+		Configuration config = new Configuration();
+		config.set("filter-ip", args[2]);
+		Job job = Job.getInstance(config);
 		job.setJarByClass(PageHitsDriver.class);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(LongWritable.class);
