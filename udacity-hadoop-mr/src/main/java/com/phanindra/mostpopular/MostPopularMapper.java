@@ -40,10 +40,4 @@ public class MostPopularMapper extends
 		}
 		return result;
 	}
-	
-	public static void main(String[] args) {
-		String line = "10.64.224.191 - - [03/Dec/2011:13:25:20 -0800] \"GET http://www.the-associates.co.uk/search/index.php?query=Darker+than+black&p=1 HTTP/1.1\" 200 2845";
-		MostPopularMapper mapper = new MostPopularMapper();
-		System.out.println(mapper.removeDomain(mapper.getUrl(line)));
-	}
 }

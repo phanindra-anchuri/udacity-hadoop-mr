@@ -11,7 +11,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-@SuppressWarnings("unused")
 public class MostPopularReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
 	
 	private Map<String, Long> pageCount = new HashMap<String, Long>() ;
