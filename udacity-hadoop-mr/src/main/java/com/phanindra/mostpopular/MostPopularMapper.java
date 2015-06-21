@@ -1,6 +1,8 @@
 package com.phanindra.mostpopular;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -14,34 +16,34 @@ public class MostPopularMapper extends
 	@Override
 	protected void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
-		String val = value.toString();
-		String request = extractRequest(val);
-		String requestNoDomain = removeDomain(request);
-		context.write(new Text(requestNoDomain), new LongWritable(1L));
+		String line = value.toString();
+		String url = getUrl(line);
+		String fileName = removeDomain(url);
+		context.write(new Text(fileName), new LongWritable(1L));
 	}
 	
-	private String extractRequest(String line) {
-		String[] parts = line.split("\"");
-		String request = parts[1].replaceAll("\"", "");
-		System.out.println(request);
-		return request;
+	private String getUrl(String line) {
+		String[] lineParts = line.split("\\s+");
+		return lineParts[6];
 	}
-	
+
 	private String removeDomain(String url) {
-		String [] c =url.split("http://");
-		if(c.length > 1 && c[1].lastIndexOf("/")!=-1 && c[1].lastIndexOf("?")!=-1) {
-			return c[1].substring(c[1].indexOf("/"), c[1].lastIndexOf("?"));
-		} else if(c.length > 1 && c[1].lastIndexOf("/")!=-1 && c[1].lastIndexOf("?")==-1) {
-			return c[1].substring(c[1].indexOf("/"));
+		String result = "";
+		URL u;
+		try {
+			u = new URL(url);
+			result = u.getFile();
+		} catch (MalformedURLException e) {
+			if(e.getMessage().contains("no protocol")) {
+				result = url;
+			}
 		}
-		else {
-			return url;
-		}
+		return result;
 	}
 	
 	public static void main(String[] args) {
-		MostPopularMapper m = new MostPopularMapper();
-		m.extractRequest("10.223.157.186 - - [15/Jul/2009:14:58:59 -0700] \"GET / HTTP/1.1\" 404 209");
+		String line = "10.64.224.191 - - [03/Dec/2011:13:25:20 -0800] \"GET http://www.the-associates.co.uk/search/index.php?query=Darker+than+black&p=1 HTTP/1.1\" 200 2845";
+		MostPopularMapper mapper = new MostPopularMapper();
+		System.out.println(mapper.removeDomain(mapper.getUrl(line)));
 	}
-
 }
