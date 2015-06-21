@@ -21,23 +21,27 @@ public class MostPopularMapper extends
 	}
 	
 	private String extractRequest(String line) {
-		int beginQuoteIndex = line.indexOf("\"");
-		int closeQuoteIndex = line.lastIndexOf("\"");
-		String requestLine = line.substring(beginQuoteIndex,
-				closeQuoteIndex + 1);
-		return requestLine;
+		String[] parts = line.split("\"");
+		String request = parts[1].replaceAll("\"", "");
+		System.out.println(request);
+		return request;
 	}
 	
 	private String removeDomain(String url) {
 		String [] c =url.split("http://");
-		if(c.length > 1 && c[1].lastIndexOf("?")!=-1) {
+		if(c.length > 1 && c[1].lastIndexOf("/")!=-1 && c[1].lastIndexOf("?")!=-1) {
 			return c[1].substring(c[1].indexOf("/"), c[1].lastIndexOf("?"));
-		} else if(c.length > 1 && c[1].lastIndexOf("?")==-1) {
+		} else if(c.length > 1 && c[1].lastIndexOf("/")!=-1 && c[1].lastIndexOf("?")==-1) {
 			return c[1].substring(c[1].indexOf("/"));
 		}
 		else {
 			return url;
 		}
+	}
+	
+	public static void main(String[] args) {
+		MostPopularMapper m = new MostPopularMapper();
+		m.extractRequest("10.223.157.186 - - [15/Jul/2009:14:58:59 -0700] \"GET / HTTP/1.1\" 404 209");
 	}
 
 }
